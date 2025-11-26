@@ -1,14 +1,14 @@
 import { Heading } from './components/Heading';
 
 import './styles/theme.css';
-import './styles/global.css'
+import './styles/global.css';
 
 export function App() {
-  console.log('oi');
-
   return (
     <>
-      <Heading attr={123} attr2='string'>Ola Mundo!</Heading>
+      <Heading attr={123} attr2='string'>
+        Ola Mundo!
+      </Heading>
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem
         temporibus placeat deserunt facere voluptate doloremque, sit facilis?
