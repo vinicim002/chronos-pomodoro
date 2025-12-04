@@ -2,13 +2,18 @@ import { PlayCircleIcon } from 'lucide-react';
 import { Input } from '../Input';
 import { Cycles } from '../Cycles';
 import { DefaultButton } from '../DefaultButton';
-import { useState } from 'react';
+import { useRef } from 'react';
 
 export function MainForm() {
-  const [taskNamem, setTaskName] = useState('');
+  //Forma Controlada -> quando quero o valor do input em tempo real
+  // const [taskName, setTaskName] = useState('');
+
+  //Forma Nao Controlada
+  const taskNameInput = useRef<HTMLInputElement>(null);
 
   function handleCreateNewTask(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    console.log();
   }
 
   return (
@@ -19,8 +24,12 @@ export function MainForm() {
           id='input'
           type='text'
           placeholder='Digite algo...'
-          value={taskNamem}
-          onChange={e => setTaskName(e.target.value)}
+          //Forma Controlada
+          // value={taskName}
+          // onChange={e => setTaskName(e.target.value)}
+
+          //Forma Nao Controlada
+          ref={taskNameInput}
         />
       </div>
 
