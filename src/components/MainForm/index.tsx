@@ -5,14 +5,18 @@ import { DefaultButton } from '../DefaultButton';
 import { useRef } from 'react';
 import type { TaskModel } from '../../models/TaskModel';
 import { useTaskContext } from '../../contexts/TaskContext/useTaskContext';
+import { getNextCycle } from '../../utils/getNextCycle';
 
 export function MainForm() {
-  const { setState } = useTaskContext();
+  const { state, setState } = useTaskContext();
   //Forma Controlada -> quando quero o valor do input em tempo real
   // const [taskName, setTaskName] = useState('');
 
   //Forma Nao Controlada
   const taskNameInput = useRef<HTMLInputElement>(null);
+
+  //Ciclos
+  const nextCycle = getNextCycle(state.currentCycle);
 
   function handleCreateNewTask(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -43,7 +47,7 @@ export function MainForm() {
         ...prevState,
         config: { ...prevState.config },
         activeTask: newTask,
-        currentCycle: 1, //Conferir depois
+        currentCycle: nextCycle, //Conferir depois
         secondsRemaining: secondsRemaining, //Conferir depois
         formattedSecondsRemaining: '00:00', //Conferir depois
         tasks: [...prevState.tasks, newTask],
