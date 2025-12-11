@@ -18,6 +18,7 @@ export function MainForm() {
 
   //Forma Nao Controlada
   const taskNameInput = useRef<HTMLInputElement>(null);
+  const lastTaskName = state.tasks[state.tasks.length - 1]?.name || '';
 
   //Ciclos
   const nextCycle = getNextCycle(state.currentCycle);
@@ -71,6 +72,7 @@ export function MainForm() {
           //Forma Nao Controlada
           ref={taskNameInput}
           disabled={!!state.activeTask}
+          defaultValue={lastTaskName}
         />
       </div>
 
