@@ -47,8 +47,14 @@ export function History() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setConfirmClearHistory(false);
 
-    dispatch({ type: TaskActionTypes.RESET_STATE });
+    // dispatch({ type: TaskActionTypes.RESET_STATE });
   }, [confirmClearHistory, dispatch]);
+
+  useEffect(() => {
+    return () => {
+      showMessage.dismiss();
+    };
+  }, []);
 
   function handleSortTasks({ field }: Pick<SortTasksOptions, 'field'>) {
     const newDirection = sortTasksOptions.direction === 'desc' ? 'asc' : 'desc';
@@ -67,7 +73,11 @@ export function History() {
   function handleResetHistory() {
     showMessage.dismiss();
     showMessage.confirm('Tem certeza?', confirmation => {
-      setConfirmClearHistory(confirmation);
+      // setConfirmClearHistory(confirmation);
+
+      if (confirmation) {
+        dispatch({ type: TaskActionTypes.RESET_STATE });
+      }
     });
   }
 
