@@ -1,13 +1,14 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 import { TrashIcon } from 'lucide-react';
 import { Container } from '../../components/Container';
 import { DefaultButton } from '../../components/DefaultButton';
 import { Heading } from '../../components/Heading';
 import { MainTemplate } from '../../templates/MainTemplate';
+
 import styles from './styles.module.css';
 import { useTaskContext } from '../../contexts/TaskContext/useTaskContext';
 import { formatDate } from '../../utils/formatDate';
 import { getTaskStatus } from '../../utils/getTaskStatus';
+
 import { useEffect, useState } from 'react';
 import { showMessage } from '../../adapters/showMessage';
 import { sortTasks, type SortTasksOptions } from '../../utils/sortTasks';
@@ -29,6 +30,7 @@ export function History() {
   );
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSortTaskOptions(prevState => ({
       ...prevState,
       tasks: sortTasks({
@@ -39,6 +41,14 @@ export function History() {
     }));
   }, [state.tasks]);
 
+  useEffect(() => {
+    if (!confirmClearHistory) return;
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setConfirmClearHistory(false);
+
+    dispatch({ type: TaskActionTypes.RESET_STATE });
+  }, [confirmClearHistory, dispatch]);
 
   function handleSortTasks({ field }: Pick<SortTasksOptions, 'field'>) {
     const newDirection = sortTasksOptions.direction === 'desc' ? 'asc' : 'desc';
@@ -63,7 +73,7 @@ export function History() {
 
   return (
     <MainTemplate>
-      <Container>c
+      <Container>
         <Heading>
           <span>History</span>
           {hasTasks && (
