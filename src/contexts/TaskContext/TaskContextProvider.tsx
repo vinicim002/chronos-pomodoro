@@ -2,10 +2,10 @@ import { useEffect, useReducer, useRef } from 'react';
 import { initialTaskState } from './initialTaskState';
 import { TaskContext } from './TaskContext';
 import { taskReducer } from './taskReducer';
-import { TimerWorkerManager } from '../../workers/timerWorkerMenager';
-import { TaskActionTypes } from './taskAction';
 import { loadBeep } from '../../utils/loadBeep';
 import type { TaskStateModel } from '../../models/TaskStateModel';
+import { TimerWorkerManager } from '../../workers/timerWorkerMenager';
+import { TaskActionTypes } from './taskAction';
 
 type TaskContextProviderProps = {
   children: React.ReactNode;
@@ -14,6 +14,7 @@ type TaskContextProviderProps = {
 export function TaskContextProvider({ children }: TaskContextProviderProps) {
   const [state, dispatch] = useReducer(taskReducer, initialTaskState, () => {
     const storageState = localStorage.getItem('state');
+
     if (storageState === null) return initialTaskState;
 
     const parsedStorageState = JSON.parse(storageState) as TaskStateModel;
@@ -29,28 +30,33 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
 
   const worker = TimerWorkerManager.getInstance();
 
-  worker.onmessage(e => {
-    const countDownSeconds = e.data;
+  useEffect(() => {
+    worker.onmessage(e => {
+      const countDownSeconds = e.data;
 
-    if (countDownSeconds <= 0) {
-      if (playBeepRef.current()) {
-        playBeepRef.current();
-        playBeepRef.current = null;
+      if (countDownSeconds <= 0) {
+        if (playBeepRef.current) {
+          playBeepRef.current();
+          playBeepRef.current = null;
+        }
+
+        dispatch({
+          type: TaskActionTypes.COMPLETE_TASK,
+        });
+
+        worker.terminate();
+      } else {
+        dispatch({
+          type: TaskActionTypes.COUNT_DOWN,
+          payload: { secondsRemaining: countDownSeconds },
+        });
       }
-      dispatch({
-        type: TaskActionTypes.COMPLETE_TASK,
-      });
-      worker.terminate();
-    } else {
-      dispatch({
-        type: TaskActionTypes.COUNT_DOWN,
-        payload: { secondsRemaining: countDownSeconds },
-      });
-    }
-  });
+    });
+  }, [worker, dispatch]);
 
   useEffect(() => {
     localStorage.setItem('state', JSON.stringify(state));
+
     if (!state.activeTask) {
       worker.terminate();
     }
